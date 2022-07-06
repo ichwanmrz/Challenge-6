@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { param, default: req } = require("express/lib/request");
+const {
+  param,
+  default: req
+} = require("express/lib/request");
 const {
   contentType,
   default: res,
@@ -10,14 +13,17 @@ const {
 const ejsLint = require("ejs-lint");
 const app = express();
 const port = 3000;
-const data = require("./static/data-post.json");
+// const data = require("./static/data-post.json");
 const bodyParser = require("body-parser");
-const { json } = require("body-parser");
-const { user_game } = require("./models");
-const { user_game_biodata } = require("./models");
-const { user_game_history } = require("./models");
-const { response } = require("express");
-const { Result } = require("express-validator");
+const {
+  user_game
+} = require("./models");
+const {
+  user_game_biodata
+} = require("./models");
+const {
+  user_game_history
+} = require("./models");
 
 app.set("view engine", "ejs");
 app.use(
@@ -48,11 +54,22 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-  const { username } = req.body;
-  res.render(__dirname + "/profile.ejs", {
-    username: `${username}`,
-    totalUsers: user_game.length,
-  });
+  const {
+    id
+  } = req.params;
+  const {
+    username,
+    password
+  } = req.body;
+  user_game
+    .findOne({
+      where: {},
+    })
+    .then((user) => {
+      res.render(__dirname + "/profile.ejs", {
+        user,
+      });
+    });
 });
 
 app.get("/dashboard", (req, res) => {
@@ -68,7 +85,9 @@ app.get("/dashboard", (req, res) => {
 });
 
 app.get("/user/:id/edit", (req, res) => {
-  const { id } = req.params;
+  const {
+    id
+  } = req.params;
   user_game
     .findOne({
       where: {
@@ -89,34 +108,36 @@ app.get("/trial", (req, res) => {
 
 //Maaf Mas, untuk Update datanya baru bisa jika user pada baris pertama, belum berhasil untuk setiap baris.
 app.post("/user/:id/edit", (req, res) => {
-  const { id } = req.params;
-  const { username, password, first_name, last_name, birthplace } = req.body;
+  const {
+    id
+  } = req.params;
+  const {
+    username,
+    password,
+    first_name,
+    last_name,
+    birthplace
+  } = req.body;
   user_game
-    .update(
-      {
-        username,
-        password,
+    .update({
+      username,
+      password,
+    }, {
+      where: {
+        id,
       },
-      {
-        where: {
-          id,
-        },
-      }
-    )
+    })
     .then((response) => {
       user_game_biodata
-        .update(
-          {
-            first_name,
-            last_name,
-            birthplace,
+        .update({
+          first_name,
+          last_name,
+          birthplace,
+        }, {
+          where: {
+            id_user: id,
           },
-          {
-            where: {
-              id_user: id,
-            },
-          }
-        )
+        })
         .then((response) => {
           res.redirect("/dashboard");
         });
@@ -124,7 +145,9 @@ app.post("/user/:id/edit", (req, res) => {
 });
 
 app.get("/user/:id/delete", (req, res) => {
-  const { id } = req.params;
+  const {
+    id
+  } = req.params;
   user_game.destroy({
     where: {
       id,
@@ -135,7 +158,10 @@ app.get("/user/:id/delete", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const { username, password } = req.body;
+  const {
+    username,
+    password
+  } = req.body;
   const isSuperAdmin = true;
   user_game
     .findOne({
@@ -160,7 +186,13 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/add", (req, res) => {
-  const { username, password, first_name, last_name, birthplace } = req.body;
+  const {
+    username,
+    password,
+    first_name,
+    last_name,
+    birthplace
+  } = req.body;
   user_game
     .create({
       username,
