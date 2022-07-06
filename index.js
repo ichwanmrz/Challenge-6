@@ -54,13 +54,6 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
-  const {
-    id
-  } = req.params;
-  const {
-    username,
-    password
-  } = req.body;
   user_game
     .findOne({
       where: {},
@@ -73,13 +66,6 @@ app.get("/profile", (req, res) => {
 });
 
 app.get("/user/:id", (req, res) => {
-  const {
-    id
-  } = req.params;
-  const {
-    username,
-    password
-  } = req.body;
   user_game
     .findOne({
       where: {},
