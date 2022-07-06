@@ -72,6 +72,25 @@ app.get("/profile", (req, res) => {
     });
 });
 
+app.get("/user/:id", (req, res) => {
+  const {
+    id
+  } = req.params;
+  const {
+    username,
+    password
+  } = req.body;
+  user_game
+    .findOne({
+      where: {},
+    })
+    .then((user) => {
+      res.render(__dirname + "/profile.ejs", {
+        user,
+      });
+    });
+});
+
 app.get("/dashboard", (req, res) => {
   user_game
     .findAll({
