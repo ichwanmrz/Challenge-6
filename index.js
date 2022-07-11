@@ -54,28 +54,57 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/profile", (req, res) => {
+  const { id } = req.params;
   user_game
     .findOne({
-      where: {},
+      where: {
+      
+      },include: user_game_biodata
     })
     .then((user) => {
       res.render(__dirname + "/profile.ejs", {
         user,
       });
     });
-});
+  });
 
-app.get("/user/:id", (req, res) => {
-  user_game
-    .findOne({
-      where: {},
-    })
-    .then((user) => {
-      res.render(__dirname + "/profile.ejs", {
-        user,
+
+  app.post("/profile/:id/edit", (req, res) => {
+    const {
+      id
+    } = req.params;
+    const {
+      username,
+      password,
+      first_name,
+      last_name,
+      birthplace
+    } = req.body;
+    user_game
+      .update({
+        username,
+        password,
+      }, {
+        where: {
+          id,
+        },
+      })
+      .then((response) => {
+        user_game_biodata
+          .update({
+            first_name,
+            last_name,
+            birthplace,
+          }, {
+            where: {
+              id_user: id,
+            },
+          })
+          .then((response) => {
+            res.redirect("/profile");
+          });
       });
-    });
-});
+  });
 
 app.get("/dashboard", (req, res) => {
   user_game
@@ -111,7 +140,6 @@ app.get("/trial", (req, res) => {
   res.render(__dirname + "/trial.ejs");
 });
 
-//Maaf Mas, untuk Update datanya baru bisa jika user pada baris pertama, belum berhasil untuk setiap baris.
 app.post("/user/:id/edit", (req, res) => {
   const {
     id
